@@ -42,10 +42,7 @@ var shoppingCart = (function () {
         console.log("addItemToCart:", name, price, count);
 
         var item = new Item(name, price, count);
-        cart.push(
-            
-            
-        );
+        cart.push(item);
         saveCart();
     };
 

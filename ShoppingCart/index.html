@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>购物车</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        ol,
+        ul {
+            list-style: none;
+        }
+
+        .w {
+            width: 1200px;
+            margin: 0 auto;
+        }
+
+        .head {
+            padding: 30px 0 60px;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div class="head w">
+                <h2>购物车</h2>
+            </div>
+        </div>
+        <div class="main">
+            <div class="content w">
+
+                <div class="shop-list">
+                    <ul>
+                        <li><a class="add-to-cart" href="#" data-name="苹果" data-price="1.22">苹果 ￥1.22</a></li>
+                        <li><a class="add-to-cart" href="#" data-name="香蕉" data-price="1.33">香蕉 ￥1.33</a></li>
+                        <li><a class="add-to-cart" href="#" data-name="鞋" data-price="22.33">鞋 ￥22.33</a></li>
+                        <li><a class="add-to-cart" href="#" data-name="飞盘" data-price="5.22">飞盘 ￥5.22</a></li>
+                    </ul>
+                    <button id="clear-cart">清空购物车</button>
+                </div>
+                <div class="goods-price">
+                    <ul id="show-cart">
+                        <li>???????</li>
+                    </ul>
+                    <div>您的购物车中有<span id="count-cart">X</span>件商品</div>
+                    <div>购物车总额：￥<span id="total-cart"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer"></div>
+    </div>
+
+    <script src="js/shoppingCart.js"></script>
+
+    <script>
+        $(function () {
+            $(".add-to-cart").click(function (event) {
+                event.preventDefault();
+                var name = $(this).attr("data-name");
+                var price = Number($(this).attr("data-price"));
+
+                shoppingCart.addItemToCart(name, price, 1);
+                displayCart();
+            });
+
+            $("#clear-cart").click(function (event) {
+                shoppingCart.clearCart();
+                displayCart();
+            });
+
+            function displayCart() {
+                var cartArray = shoppingCart.listCart();
+                console.log(cartArray);
+                var output = "";
+
+                for (var i in cartArray) {
+                    output += "<li>" +
+                        cartArray[i].name +
+                        " <input class='item-count' type='number' data-name='" +
+                        cartArray[i].name +
+                        "' value='" + cartArray[i].count + "' >" +
+                        " x " + cartArray[i].price +
+                        " = " + cartArray[i].total +
+                        " <button class='plus-item' data-name='" +
+                        cartArray[i].name + "'>+</button>" +
+                        " <button class='subtract-item' data-name='" +
+                        cartArray[i].name + "'>-</button>" +
+                        " <button class='delete-item' data-name='" +
+                        cartArray[i].name + "'>X</button>" +
+                        "</li>";
+                }
+
+                $("#show-cart").html(output);
+                $("#count-cart").html(shoppingCart.countCart());
+                $("#total-cart").html(shoppingCart.totalCart());
+            }
+
+            $("#show-cart").on("click", ".delete-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.removeItemFromCartAll(name);
+                displayCart();
+            });
+
+            $("#show-cart").on("click", ".subtract-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.removeItemFromCart(name);
+                displayCart();
+            });
+
+            $("#show-cart").on("click", ".plus-item", function (event) {
+                var name = $(this).attr("data-name");
+                shoppingCart.addItemToCart(name, 0, 1);
+                displayCart();
+            });
+
+            $("#show-cart").on("change", ".item-count", function (event) {
+                var name = $(this).attr("data-name");
+                var count = Number($(this).val());
+                shoppingCart.setCountForItem(name, count);
+                displayCart();
+            });
+
+
+            displayCart();
+        })
+    </script>
+</body>
+
+</html>
